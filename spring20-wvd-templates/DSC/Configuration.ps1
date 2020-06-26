@@ -6,8 +6,13 @@ configuration AddSessionHost
         [string]$HostPoolName,
 
         [Parameter(Mandatory = $true)]
-        [string]$RegistrationInfoToken
+        [string]$RegistrationInfoToken,
+
+        [Parameter(mandatory = $false)]
+        [bool]$EnableVerboseMsiLogging = $false
     )
+
+    $ErrorActionPreference = 'Stop'
 
     $rdshIsServer = $true
     $ScriptPath = [system.io.path]::GetDirectoryName($PSCommandPath)
@@ -46,10 +51,26 @@ configuration AddSessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
-                    & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken
+                    try {
+                        & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken -EnableVerboseMsiLogging:($using:EnableVerboseMsiLogging)
+                    }
+                    catch {
+                        $ErrMsg = $PSItem | Format-List -Force | Out-String
+                        Write-Log -Err $ErrMsg
+                        throw [System.Exception]::new("Some error occurred in DSC ExecuteRdAgentInstallServer SetScript: $ErrMsg", $PSItem.Exception)
+                    }
+
                 }
                 TestScript = {
-                    return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
+                    try {
+                        return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
+                    }
+                    catch {
+                        $ErrMsg = $PSItem | Format-List -Force | Out-String
+                        Write-Log -Err $ErrMsg
+                        throw [System.Exception]::new("Some error occurred in DSC ExecuteRdAgentInstallServer TestScript: $ErrMsg", $PSItem.Exception)
+                    }
+
                 }
             }
         }
@@ -62,10 +83,26 @@ configuration AddSessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
-                    & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken
+                    try {
+                        & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken -EnableVerboseMsiLogging:($using:EnableVerboseMsiLogging)
+                    }
+                    catch {
+                        $ErrMsg = $PSItem | Format-List -Force | Out-String
+                        Write-Log -Err $ErrMsg
+                        throw [System.Exception]::new("Some error occurred in DSC ExecuteRdAgentInstallClient SetScript: $ErrMsg", $PSItem.Exception)
+                    }
+
                 }
                 TestScript = {
-                    return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
+                    try {
+                        return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
+                    }
+                    catch {
+                        $ErrMsg = $PSItem | Format-List -Force | Out-String
+                        Write-Log -Err $ErrMsg
+                        throw [System.Exception]::new("Some error occurred in DSC ExecuteRdAgentInstallClient TestScript: $ErrMsg", $PSItem.Exception)
+                    }
+
                 }
             }
         }
