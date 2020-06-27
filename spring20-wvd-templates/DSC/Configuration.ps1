@@ -43,6 +43,8 @@ configuration AddSessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
+                    . (Join-Path $using:ScriptPath "Functions.ps1")
+
                     try {
                         & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken -EnableVerboseMsiLogging:($using:EnableVerboseMsiLogging)
                     }
@@ -54,6 +56,8 @@ configuration AddSessionHost
 
                 }
                 TestScript = {
+                    . (Join-Path $using:ScriptPath "Functions.ps1")
+                    
                     try {
                         return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
                     }
@@ -75,6 +79,8 @@ configuration AddSessionHost
                     return @{'Result' = ''}
                 }
                 SetScript = {
+                    . (Join-Path $using:ScriptPath "Functions.ps1")
+                    
                     try {
                         & "$using:ScriptPath\Script-AddRdshServer.ps1" -HostPoolName $using:HostPoolName -RegistrationInfoToken $using:RegistrationInfoToken -EnableVerboseMsiLogging:($using:EnableVerboseMsiLogging)
                     }
@@ -86,6 +92,8 @@ configuration AddSessionHost
 
                 }
                 TestScript = {
+                    . (Join-Path $using:ScriptPath "Functions.ps1")
+                    
                     try {
                         return (Test-path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent")
                     }
