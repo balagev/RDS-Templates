@@ -37,6 +37,8 @@ ExtractDeploymentAgentZipFile -ScriptPath $ScriptPath -DeployAgentLocation $Depl
 Write-Log -Message "Changing current folder to Deployagent folder: $DeployAgentLocation"
 Set-Location "$DeployAgentLocation"
 
+throw "test exception 1"
+
 # Checking if RDInfragent is registered or not in rdsh vm
 $CheckRegistry = Get-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\RDInfraAgent" -ErrorAction SilentlyContinue
 
