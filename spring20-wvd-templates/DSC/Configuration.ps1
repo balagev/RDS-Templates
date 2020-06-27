@@ -13,19 +13,11 @@ configuration AddSessionHost
     )
 
     $ErrorActionPreference = 'Stop'
-
-    $rdshIsServer = $true
-    $ScriptPath = [system.io.path]::GetDirectoryName($PSCommandPath)
-
-    $OSVersionInfo = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
     
-    if ($OSVersionInfo -ne $null)
-    {
-        if ($OSVersionInfo.InstallationType -ne $null)
-        {
-            $rdshIsServer=@{$true = $true; $false = $false}[$OSVersionInfo.InstallationType -eq "Server"]
-        }
-    }
+    $ScriptPath = [system.io.path]::GetDirectoryName($PSCommandPath)
+    . (Join-Path $ScriptPath "Functions.ps1")
+
+    $rdshIsServer = isRdshServer
 
     Node localhost
     {
